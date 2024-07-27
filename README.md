@@ -1,7 +1,5 @@
 # Folder in New Window
 
-### ℹ️ See the [VSCode Extension Marketplace page](https://marketplace.visualstudio.com/items?itemName=shouples-dev.folder-in-new-window) to install.
-
 ## Usage
 
 From the [Exporer view](https://code.visualstudio.com/docs/getstarted/userinterface#_explorer-view), right-click on any folder or file, then click `Open Folder in New Window` to launch a new workspace window with the selected folder as the root.
