@@ -44,6 +44,11 @@ async function openFolderInNewWindow(item?: vscode.Uri) {
   await vscode.commands.executeCommand('vscode.openFolder', dir, true);
 }
 
+/**
+ * Retrieves the URI of the current workspace folder.
+ * If there are no workspace folders, it returns the root URI.
+ * @returns The URI of the current workspace folder or the root URI.
+ */
 function getCurrentWorkspaceFolderUri(): vscode.Uri {
   let dir: vscode.Uri;
   let workspaceFolder: vscode.WorkspaceFolder | undefined = vscode.workspace.workspaceFolders?.[0];
