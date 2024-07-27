@@ -1,6 +1,7 @@
 {
   "name": "folder-in-new-window",
   "publisher": "shouples-dev",
+  "icon": "resources/open-file-folder.png",
   "displayName": "Folder in New Window",
   "description": "Allows you to easily open a folder from the Exporer in a new VSCode window.",
   "repository": {
