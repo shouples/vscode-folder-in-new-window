@@ -1,7 +1,7 @@
 {
   "name": "folder-in-new-window",
   "publisher": "shouples-dev",
-  "displayName": "folder-in-new-window",
+  "displayName": "Folder in New Window",
   "description": "Allows you to easily open a folder from the Exporer in a new VSCode window.",
   "repository": {
     "type": "git",
