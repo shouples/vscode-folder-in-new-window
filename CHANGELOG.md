@@ -4,6 +4,10 @@ All notable changes to the "folder-in-new-window" extension will be documented i
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## 0.5.1
+
+- Minor formatting changes to package description and README.
+
+## 0.5.0
 
 - Initial release
