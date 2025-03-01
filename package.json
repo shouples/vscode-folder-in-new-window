@@ -3,7 +3,7 @@
   "publisher": "shouples-dev",
   "icon": "resources/open-file-folder.png",
   "displayName": "Folder in New Window",
-  "description": "Allows you to easily open a folder from the Exporer in a new VSCode window.",
+  "description": "Allows you to easily open a folder from the Exporer in a new VS Code window.",
   "repository": {
     "type": "git",
     "url": "https://github.com/shouples/vscode-folder-in-new-window.git"
