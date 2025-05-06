@@ -2,6 +2,7 @@
     "root": true,
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "project": "./tsconfig.json",
         "ecmaVersion": 6,
         "sourceType": "module"
     },
@@ -13,9 +14,13 @@
             "warn",
             {
                 "selector": "import",
-                "format": [ "camelCase", "PascalCase" ]
+                "format": [
+                    "camelCase",
+                    "PascalCase"
+                ]
             }
         ],
+        "@typescript-eslint/no-floating-promises": "error",
         "@typescript-eslint/semi": "warn",
         "curly": "warn",
         "eqeqeq": "warn",
