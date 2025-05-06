@@ -1,4 +1,5 @@
 import { commands, FileStat, FileType, Uri, window, workspace, WorkspaceFolder } from "vscode";
+import { fsStat } from "./util";
 
 /**
  * Handle the command to open a folder in a new window.
@@ -28,7 +29,7 @@ export async function openFolderInNewWindow(item?: Uri) {
   } else {
     // command invoked from the explorer; open the selected folder or the parent folder if a file is
     // selected
-    const stat: FileStat = await workspace.fs.stat(item);
+    const stat: FileStat = await fsStat(item);
     if (stat.type === FileType.Directory) {
       dir = item;
     } else {
