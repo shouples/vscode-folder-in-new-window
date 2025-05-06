@@ -31,7 +31,15 @@
     "commands": [
       {
         "command": "folder-in-new-window.open",
-        "title": "Open Folder in New Window"
+        "title": "Open Folder in New Window",
+        "icon": "$(folder)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "folder-in-new-window.open",
+        "key": "alt+shift+n",
+        "mac": "opt+shift+n"
       }
     ],
     "menus": {
@@ -55,11 +63,12 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/sinon": "^17.0.4",
     "@types/vscode": "^1.91.0",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.3.9",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^8.57.0",
     "sinon": "^20.0.0",
     "typescript": "^5.4.5"
