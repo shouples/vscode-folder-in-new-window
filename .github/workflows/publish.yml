@@ -13,12 +13,12 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Download workflow artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
-          workflow: Release
-          workflow_conclusion: success
           name: release-info
           path: release-info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Load release info
         id: release-info
