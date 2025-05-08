@@ -1,10 +1,10 @@
-name: CI Pipeline
+name: Build-Lint-Test
 
 on:
   pull_request:
-    branches: [main, master]
+    branches: [main]
   push:
-    branches: [main, master]
+    branches: [main]
 
 jobs:
   lint:
