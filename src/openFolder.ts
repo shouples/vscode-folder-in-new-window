@@ -1,5 +1,5 @@
-import { commands, FileStat, FileType, Uri, window, workspace, WorkspaceFolder } from "vscode";
-import { fsStat } from "./util";
+import { commands, FileStat, FileType, Uri, window } from "vscode";
+import { fsStat, getCurrentWorkspaceFolderUri } from "./util";
 
 /**
  * Handle the command to open a folder in a new window.
@@ -41,20 +41,4 @@ export async function openFolderInNewWindow(item?: Uri) {
   // "true" indicates a new window will be opened - for the purpose of this extension, we never want
   // it to be false
   await commands.executeCommand("vscode.openFolder", dir, true);
-}
-
-/**
- * Retrieves the URI of the current workspace folder.
- * If there are no workspace folders, it returns the root URI.
- * @returns The URI of the current workspace folder or the root URI.
- */
-export function getCurrentWorkspaceFolderUri(): Uri {
-  let dir: Uri;
-  let workspaceFolder: WorkspaceFolder | undefined = workspace.workspaceFolders?.[0];
-  if (workspaceFolder) {
-    dir = workspaceFolder.uri;
-  } else {
-    dir = Uri.file("/");
-  }
-  return dir;
 }
