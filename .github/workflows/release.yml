@@ -149,7 +149,7 @@ jobs:
       
       - name: Upload release info
         if: steps.bump-type.outputs.bump != 'none'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-info
           path: release-info/
