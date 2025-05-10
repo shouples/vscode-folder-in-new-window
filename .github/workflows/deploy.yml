@@ -1,0 +1,55 @@
+name: Deploy to VS Marketplace
+
+on:
+  push:
+    branches:
+    - main
+  release:
+    types:
+    - created
+
+jobs:
+  publish:
+    name: Publish to VS Marketplace
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'release'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package Extension
+        run: |
+          npm install -g @vscode/vsce
+          vsce package
+          
+      - name: Get Extension Version
+        id: get-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        
+      - name: Upload .vsix to Release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix
+          asset_name: folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix
+          asset_content_type: application/octet-stream
+          
+      - name: Publish to VS Marketplace
+        if: success() && (github.event_name == 'release' || github.event_name == 'push' && github.ref == 'refs/heads/main')
+        run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
