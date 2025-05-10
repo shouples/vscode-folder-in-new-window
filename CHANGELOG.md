@@ -4,12 +4,12 @@ All notable changes to this extension will be documented in this file.
 
 ## 0.6.0
 
-No user-facing changes; just some testing, refactoring, and CI integrations.
-
 ### Added
 
+- Keybinding support for `Shift+Alt+N`/`Shift+Opt+N` to trigger the main command for opening a new
+  window.
 - Mocha tests with `sinon`
-- GitHub Actions CI for testing and release
+- GitHub Actions workflows for testing and releases
 
 ## 0.5.1 - 0.5.2
 
