@@ -48,21 +48,42 @@ jobs:
         id: check-src-changes
         if: github.event_name != 'workflow_dispatch'
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -q "^src/"; then
+          # Find the most recent tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LATEST_TAG" ]; then
+            # If no tags exist, check all files
             echo "src_changed=true" >> $GITHUB_OUTPUT
+            echo "No previous release found, treating as source change"
           else
-            echo "src_changed=false" >> $GITHUB_OUTPUT
+            # Check for changes in src/ directory since the last tag
+            if git diff --name-only $LATEST_TAG HEAD | grep -q "^src/"; then
+              echo "src_changed=true" >> $GITHUB_OUTPUT
+              echo "Changes detected in src/ directory since $LATEST_TAG"
+            else
+              echo "src_changed=false" >> $GITHUB_OUTPUT
+              echo "No changes in src/ directory since $LATEST_TAG"
+            fi
           fi
           
       - name: Check PR title for fix prefix
         id: check-fix-prefix
         if: github.event_name != 'workflow_dispatch'
         run: |
-          PR_TITLE=$(git log -1 --pretty=format:%s)
-          if [[ "$PR_TITLE" == fix:* ]]; then
-            echo "is_fix=true" >> $GITHUB_OUTPUT
-          else
+          # Find the most recent tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LATEST_TAG" ]; then
             echo "is_fix=false" >> $GITHUB_OUTPUT
+          else
+            # Check commit messages since the last tag for the 'fix' prefix
+            if git log $LATEST_TAG..HEAD --pretty=format:%s | grep -q "^fix"; then
+              echo "is_fix=true" >> $GITHUB_OUTPUT
+              echo "Fix commit found since $LATEST_TAG"
+            else
+              echo "is_fix=false" >> $GITHUB_OUTPUT
+              echo "No fix commit found since $LATEST_TAG"
+            fi
           fi
 
       - name: Determine version bump type
@@ -70,13 +91,15 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             if [[ "${{ github.event.inputs.version_increment }}" == "auto" ]]; then
-              # Still try to auto-detect even in manual mode
+              # For manual mode with auto, always default to a patch if no changes detected
               if git diff --name-only HEAD^ HEAD | grep -q "^src/"; then
                 echo "bump=minor" >> $GITHUB_OUTPUT
               else
+                # Default to patch for manual trigger with auto
                 echo "bump=patch" >> $GITHUB_OUTPUT
               fi
             else
+              # Use explicitly specified version increment type
               echo "bump=${{ github.event.inputs.version_increment }}" >> $GITHUB_OUTPUT
             fi
           else
