@@ -29,7 +29,10 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,7 +51,10 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     needs: [build]
     steps:
       - name: Checkout
@@ -60,14 +66,20 @@ jobs:
           node-version: "18"
           cache: "npm"
 
+      - name: Install dependencies
+        run: npm ci
+
       # required for headless testing
       - name: Install Linux dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb libgbm1 libgtk-3-0
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
+      - name: Run tests (Linux only)
+        if: runner.os == 'Linux'
         run: xvfb-run -a npm test
+
+      - name: Run tests (Windows and macOS)
+        if: runner.os != 'Linux'
+        run: npm test
