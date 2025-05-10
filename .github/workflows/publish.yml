@@ -22,8 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
+          ref: v${{ steps.release-info.outputs.new_version }}
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -32,29 +32,18 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Package Extension
+        
+      - name: Install vsce
+        if: steps.release-info.outputs.bump_type != 'none'
+        run: npm install -g @vscode/vsce
+        
+      - name: Download VSIX from GitHub Release
+        if: steps.release-info.outputs.bump_type != 'none'
         run: |
-          npm install -g @vscode/vsce
-          vsce package
-
-      - name: Get Extension Version
-        id: get-version
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: Upload .vsix to Release
-        if: github.event_name == 'release'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix
-          asset_name: folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix
-          asset_content_type: application/octet-stream
-
+          VSIX_NAME="vscode-folder-in-new-window-${{ steps.release-info.outputs.new_version }}.vsix"
+          curl -L -o "$VSIX_NAME" "https://github.com/${{ github.repository }}/releases/download/v${{ steps.release-info.outputs.new_version }}/$VSIX_NAME"
+          echo "Downloaded VSIX package: $VSIX_NAME"
+        
       - name: Publish to VS Marketplace
-        if: success() && (github.event_name == 'release' || github.event_name == 'workflow_run')
-        run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
-        env:
-          VSCE_PAT: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
+        if: steps.release-info.outputs.bump_type != 'none'
+        run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath *.vsix
