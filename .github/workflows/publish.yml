@@ -1,18 +1,23 @@
-name: Deploy to VS Marketplace
+name: Publish
 
 on:
-  push:
-    branches:
-    - main
   release:
     types:
-    - created
+      - created
+  workflow_run:
+    workflows: ["CI"]
+    branches:
+      - main
+    types:
+      - completed
 
 jobs:
   publish:
     name: Publish to VS Marketplace
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'release'
+    if:
+      github.event_name == 'release' || (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,11 +37,11 @@ jobs:
         run: |
           npm install -g @vscode/vsce
           vsce package
-          
+
       - name: Get Extension Version
         id: get-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-        
+
       - name: Upload .vsix to Release
         if: github.event_name == 'release'
         uses: actions/upload-release-asset@v1
@@ -47,9 +52,9 @@ jobs:
           asset_path: ./folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix
           asset_name: folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix
           asset_content_type: application/octet-stream
-          
+
       - name: Publish to VS Marketplace
-        if: success() && (github.event_name == 'release' || github.event_name == 'push' && github.ref == 'refs/heads/main')
+        if: success() && (github.event_name == 'release' || github.event_name == 'workflow_run')
         run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
         env:
           VSCE_PAT: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
