@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: v${{ steps.release-info.outputs.new_version }}
         
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,16 +32,27 @@ jobs:
         run: npm ci
         
       - name: Install vsce
-        if: steps.release-info.outputs.bump_type != 'none'
         run: npm install -g @vscode/vsce
         
+      - name: Get Extension Version
+        id: get-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        
       - name: Download VSIX from GitHub Release
-        if: steps.release-info.outputs.bump_type != 'none'
+        if: github.event_name == 'release'
         run: |
-          VSIX_NAME="vscode-folder-in-new-window-${{ steps.release-info.outputs.new_version }}.vsix"
-          curl -L -o "$VSIX_NAME" "https://github.com/${{ github.repository }}/releases/download/v${{ steps.release-info.outputs.new_version }}/$VSIX_NAME"
+          VSIX_NAME="folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix"
+          curl -L -o "$VSIX_NAME" "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get-version.outputs.version }}/$VSIX_NAME"
           echo "Downloaded VSIX package: $VSIX_NAME"
         
+      - name: Package Extension Locally
+        if: github.event_name != 'release'
+        run: vsce package
+        
       - name: Publish to VS Marketplace
-        if: steps.release-info.outputs.bump_type != 'none'
-        run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath *.vsix
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath *.vsix
+          else
+            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
+          fi
