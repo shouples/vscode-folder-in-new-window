@@ -11,6 +11,10 @@ All notable changes to this extension will be documented in this file.
 - Mocha tests with `sinon`
 - GitHub Actions workflows for testing and releases
 
+### Fixed
+
+- Replaced the old extension icon with a smaller one to shrink the package size.
+
 ## 0.5.1 - 0.5.2
 
 - Minor formatting changes and typo fixes to package description and README.
