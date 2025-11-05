@@ -12,7 +12,7 @@
     "url": "https://github.com/shouples/vscode-folder-in-new-window/issues"
   },
   "license": "MIT",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "engines": {
     "vscode": "^1.91.0"
   },
@@ -48,6 +48,20 @@
     ],
     "menus": {
       "explorer/context": [
+        {
+          "when": "resourceScheme == file",
+          "command": "folder-in-new-window.open",
+          "group": "navigation@999"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceScheme == file",
+          "command": "folder-in-new-window.open",
+          "group": "navigation@999"
+        }
+      ],
+      "editor/title/context": [
         {
           "when": "resourceScheme == file",
           "command": "folder-in-new-window.open",
