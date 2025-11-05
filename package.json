@@ -53,6 +53,20 @@
           "command": "folder-in-new-window.open",
           "group": "navigation@999"
         }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceScheme == file",
+          "command": "folder-in-new-window.open",
+          "group": "navigation@999"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "when": "resourceScheme == file",
+          "command": "folder-in-new-window.open",
+          "group": "navigation@999"
+        }
       ]
     }
   },
