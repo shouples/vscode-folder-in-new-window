@@ -56,14 +56,14 @@
       ],
       "editor/context": [
         {
-          "when": "resourceScheme == file",
+          "when": "resourceExtname != ''",
           "command": "folder-in-new-window.open",
           "group": "navigation@999"
         }
       ],
       "editor/title/context": [
         {
-          "when": "resourceScheme == file",
+          "when": "resourceExtname != ''",
           "command": "folder-in-new-window.open",
           "group": "navigation@999"
         }
