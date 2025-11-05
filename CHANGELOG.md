@@ -2,6 +2,12 @@
 
 All notable changes to this extension will be documented in this file.
 
+## 0.7.0
+
+### Added
+
+- Exposed "Open Folder in New Window" command from editor context and title menus.
+
 ## 0.6.0
 
 ### Added
