@@ -2,6 +2,16 @@
 
 All notable changes to this extension will be documented in this file.
 
+## Unreleased
+
+## 0.7.1
+
+### Fixed
+
+- Corrected the `when` clause for editor context menu commands to use `isFileSystemResource`,
+  ensuring that the "Open Folder in New Window" command appears for file system resources regardless
+  of URI scheme.
+
 ## 0.7.0
 
 ### Added
