@@ -4,20 +4,13 @@ on:
   release:
     types:
       - created
-  workflow_run:
-    workflows: ["CI"]
-    branches:
-      - main
-    types:
-      - completed
 
 jobs:
   publish:
     name: Publish to VS Marketplace
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
-    if:
-      github.event_name == 'release' || (github.event_name == 'workflow_run' &&
-      github.event.workflow_run.conclusion == 'success')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,21 +31,15 @@ jobs:
         id: get-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
         
-      - name: Download VSIX from GitHub Release
-        if: github.event_name == 'release'
-        run: |
-          VSIX_NAME="folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix"
-          curl -L -o "$VSIX_NAME" "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get-version.outputs.version }}/$VSIX_NAME"
-          echo "Downloaded VSIX package: $VSIX_NAME"
-        
-      - name: Package Extension Locally
-        if: github.event_name != 'release'
+      - name: Package Extension VSIX
         run: vsce package
         
-      - name: Publish to VS Marketplace
+      - name: Upload VSIX to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" == "release" ]; then
-            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath *.vsix
-          else
-            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
-          fi
+          VSIX_NAME="folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix"
+          gh release upload "v${{ steps.get-version.outputs.version }}" "$VSIX_NAME" --clobber
+        
+      - name: Publish to VS Marketplace
+        run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath *.vsix
