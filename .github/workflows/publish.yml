@@ -39,7 +39,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VSIX_NAME="folder-in-new-window-${{ steps.get-version.outputs.version }}.vsix"
-          gh release upload "v${{ steps.get-version.outputs.version }}" "$VSIX_NAME" --clobber
+          gh release upload ${{ steps.get-version.outputs.version }} "$VSIX_NAME" --clobber
         
       - name: Publish to VS Marketplace
         run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath *.vsix
